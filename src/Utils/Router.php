@@ -22,7 +22,7 @@ class Router {
     }
     
     public function run() {
-        $url = $_SERVER['REQUEST_URI'];
+        $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
         $routes_urls = array();
         
         // Try match a route
