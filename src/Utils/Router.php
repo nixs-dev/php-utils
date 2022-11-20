@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use App\Utils\Globals;
+
 
 class Router {
     public $routes;
@@ -25,6 +27,8 @@ class Router {
     }
     
     public function run() {
+        Globals::set("ROUTER", $this);
+        
         $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
         
         // Setup routes groups
@@ -68,7 +72,7 @@ class Router {
         }
     }
     
-    private function raiseErrorPage($code, $message=NULL) {
+    public function raiseErrorPage($code, $message=NULL) {
         http_response_code($code);
         
         if(!isset($this->errors_controller)) {

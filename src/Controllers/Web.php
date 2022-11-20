@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Utils\Template;
-
+use App\Utils\Globals;
 
 class Web {
     public static function main() {
@@ -11,6 +11,6 @@ class Web {
             "nick" => "Joabe"
         ]);
         
-        return $t->render();
+        return (Globals::$ROUTER)->raiseErrorPage(401);
     }
 }

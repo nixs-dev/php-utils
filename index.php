@@ -1,14 +1,16 @@
 <?php
 
-define ("ROOT", __DIR__);
 require 'vendor/autoload.php';
 
 use App\Utils\Route;
 use App\Utils\Group;
 use App\Utils\Router;
+use App\Utils\Globals;
+
 
 
 $router = new Router();
+Globals::set("ROOT", __DIR__);
 
 $groups = [
     new Group("logged", ["App\\Middlewares\\Authentication"])

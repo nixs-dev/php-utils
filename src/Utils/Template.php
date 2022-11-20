@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use App\Utils\Globals;
+
 
 class Template {
     public function __construct($url, $variables) {
@@ -18,7 +20,7 @@ class Template {
         }
         
         ob_start();
-        include ROOT . "/resources/templates/" . $this->url;
+        include Globals::$ROOT . "/resources/templates/" . $this->url;
         
         $content = ob_get_clean();
         
