@@ -20,6 +20,10 @@ class Router {
         $this->routes = $routes;
     }
     
+    public function setErrorsController($controller) {
+        $this->errors_controller = $controller;
+    }
+    
     public function run() {
         $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
         
@@ -64,7 +68,7 @@ class Router {
         }
     }
     
-    private function raiseErrorPage($code) {
+    private function raiseErrorPage($code, $message=NULL) {
         http_response_code($code);
         
         if(!isset($this->errors_controller)) {
@@ -72,7 +76,7 @@ class Router {
         }
         else {
             $controller = $this->errors_controller;
-            echo $controller::${"error" . parse_str($code)};
+            echo call_user_func($controller . "::error" . strval($code), $message);
         }
     }
 }
