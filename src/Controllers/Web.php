@@ -4,13 +4,10 @@ namespace App\Controllers;
 
 use App\Utils\Template;
 use App\Utils\Globals;
+use App\Utils\Tools;
 
 class Web {
     public static function main() {
-        $t = new Template("test.php", [
-            "nick" => "Joabe"
-        ]);
-        
-        return (Globals::$ROUTER)->raiseErrorPage(401);
+        return json_encode(new \DateTime("now", new \DateTimeZone('GMT-02:00')));
     }
 }

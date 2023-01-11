@@ -8,7 +8,6 @@ use App\Utils\Router;
 use App\Utils\Globals;
 
 
-
 $router = new Router();
 Globals::set("ROOT", __DIR__);
 
@@ -17,7 +16,8 @@ $groups = [
 ];
 
 $routes = [
-    new Route("/main", "App\Controllers\Web::main", [$groups[0]]),
+    new Route("/", "App\Controllers\Web::main", [$groups[0]]),
+    new Route("/t", "App\Controllers\Web::test"),
 ];
 
 $router->setRoutes($routes);

@@ -7,11 +7,11 @@ use App\Utils\Globals;
 
 class Router {
     public $routes;
-    private $errors_controller;
+    private $error_route;
     
-    public function __construct($routes=NULL, $errors_controller=NULL) {
+    public function __construct($routes=NULL, $error_route=NULL) {
         $this->routes = $routes;
-        $this->errors_controller = $errors_controller;
+        $this->error_route = $error_route;
     }
     
     public function getRoutes() {
@@ -22,8 +22,8 @@ class Router {
         $this->routes = $routes;
     }
     
-    public function setErrorsController($controller) {
-        $this->errors_controller = $controller;
+    public function setErrorRoute($handler) {
+        $this->error_route = $handler;
     }
     
     public function run() {
@@ -75,12 +75,9 @@ class Router {
     public function raiseErrorPage($code, $message=NULL) {
         http_response_code($code);
         
-        if(!isset($this->errors_controller)) {
-            echo "THE SERVER RETURNED A <strong>${code}</strong> ERROR";
-        }
-        else {
-            $controller = $this->errors_controller;
-            echo call_user_func($controller . "::error" . strval($code), $message);
+        if(isset($this->error_route)) {
+            $handler = $this->error_route;
+            header("Location: ${handler}?code=${code}&message=${message}");
         }
     }
 }
