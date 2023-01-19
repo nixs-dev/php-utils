@@ -8,6 +8,10 @@ use App\Utils\Tools;
 
 class Web {
     public static function main() {
-        return json_encode(new \DateTime("now", new \DateTimeZone('GMT-02:00')));
+        $t = [
+            "a" => 1,
+            "b" => [1 => "88"]
+        ];
+        return json_encode($t);
     }
 }
