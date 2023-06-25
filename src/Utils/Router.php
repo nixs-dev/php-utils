@@ -3,7 +3,6 @@
 namespace App\Utils;
 
 use App\Utils\Globals;
-use App\Utils\Response;
 
 
 class Router {
@@ -78,14 +77,13 @@ class Router {
         
         if(isset($this->error_route)) {
             $handler = $this->error_route;
-            $url = "${handler}?code=${code}&message=${message}";
             
-            self::redirect($url);
+            self::redirect($handler);
         }
     }
     
     public function redirect ($url) {
-        header("location: ${url}");
+        header("location: $url");
         die();
     }
 }
