@@ -6,7 +6,8 @@ use App\Utils\Template;
 use App\Utils\Globals;
 use App\Utils\Tools;
 
-class Web {
-    public static function main() {
+class Test {
+    public static function routeParams() {
+        echo "PASSOU";
     }
 }

@@ -40,7 +40,26 @@ class Router {
         
         // Try match a route
         $matched_route = array_filter($this->routes, function ($r) use (&$url) {
-            return $r->getName() == $url;
+            if($r->getName() == $url) {
+                return true;
+            }
+
+            $splitted_route = explode("/", $r->getName());
+            $splitted_url = explode("/", $url);
+
+            if(count($splitted_route) != count($splitted_url)) {
+                return false;
+            }
+
+            for($i = 0; $i < count($splitted_route); $i++) {
+                if(!$splitted_route[$i] == $splitted_url[$i]) {
+                    if(!preg_match("/{.+}/", $splitted_route[$i])) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         });
         
         if (!$matched_route) {

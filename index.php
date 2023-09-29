@@ -16,8 +16,7 @@ $groups = [
 ];
 
 $routes = [
-    new Route("/", "App\Controllers\Web::main", [$groups[0]]),
-    new Route("/t", "App\Controllers\Web::test"),
+    new Route("/test1/{id}", "App\Controllers\Test::routeParams"),
 ];
 
 $router->setRoutes($routes);
