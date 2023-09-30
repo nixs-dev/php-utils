@@ -30,6 +30,7 @@ class Router {
         Globals::set("ROUTER", $this);
         
         $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        $route_params = [];
         
         // Setup routes groups
         foreach ($this->routes as $route) {
@@ -39,7 +40,7 @@ class Router {
         }
         
         // Try match a route
-        $matched_route = array_filter($this->routes, function ($r) use (&$url) {
+        $matched_route = array_filter($this->routes, function ($r) use (&$url, &$route_params) {
             if($r->getName() == $url) {
                 return true;
             }
@@ -52,16 +53,21 @@ class Router {
             }
 
             for($i = 0; $i < count($splitted_route); $i++) {
-                if(!$splitted_route[$i] == $splitted_url[$i]) {
-                    if(!preg_match("/{.+}/", $splitted_route[$i])) {
+                if(!($splitted_route[$i] == $splitted_url[$i])) {
+                    $args = [];
+
+                    if(!preg_match("/{.+}/", $splitted_route[$i], $args)) {
                         return false;
+                    }
+                    else {
+                        $route_params[str_replace('}', '', str_replace('{', '', $args[0]))] = $splitted_url[$i];
                     }
                 }
             }
 
             return true;
         });
-        
+
         if (!$matched_route) {
             $this->raiseErrorPage(404); // raise 404 error
             return;
@@ -84,7 +90,7 @@ class Router {
         
         // Finish request
         if ($request_accepted) {
-            echo call_user_func($matched_route->getController());
+            echo count(array_keys($route_params)) > 0 ? call_user_func_array($matched_route->getController(), array_values($route_params)) : call_user_func($matched_route->getController());
         }
         else {
             $this->raiseErrorPage(401); // raise 401 error
