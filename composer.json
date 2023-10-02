@@ -1,5 +1,5 @@
 {
-    "name": "nixs/app",
+    "name": "nixs/php-utils",
     "require": {
         "aura/autoload": "^2.0"
     },
