@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Utils;
+namespace PHPUtils;
 
-use App\Utils\Globals;
+use PHPUtils\Globals;
 
 
 class Template {
+    public $url;
+    public $variables;
+
     public function __construct($url, $variables) {
         $this->url = $url;
         $this->variables = $variables;

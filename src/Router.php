@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Utils;
+namespace PHPUtils;
 
-use App\Utils\Globals;
+use PHPUtils\Globals;
 
 
 class Router {
