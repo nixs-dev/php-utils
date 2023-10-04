@@ -1,6 +1,6 @@
 {
     "name": "nixs/php-utils",
-    "version": "dev-master",
+    "version": "1.0.0",
     "require": {
         "aura/autoload": "^2.0"
     },
