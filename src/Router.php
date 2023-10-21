@@ -3,6 +3,7 @@
 namespace PHPUtils;
 
 use PHPUtils\Globals;
+use PHPUtils\Request;
 
 
 class Router {
@@ -29,18 +30,25 @@ class Router {
     public function run() {
         Globals::set("ROUTER", $this);
         
+        $request = new Request();
         $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
         $route_params = [];
-        
-        // Setup routes groups
+
+        $request->setPath($url);
+        $request->setMethod($_SERVER['REQUEST_METHOD']);
+
+
         foreach ($this->routes as $route) {
             foreach ($route->getGroups() as $group) {
                 $route->addMiddlewares($group->getMiddlewares());
             }
         }
-        
-        // Try match a route
-        $matched_route = array_filter($this->routes, function ($r) use (&$url, &$route_params) {
+
+        $matched_route = array_filter($this->routes, function ($r) use (&$url, &$route_params, &$request) {
+            if($r->getMethod() != $_SERVER['REQUEST_METHOD']) {
+                return false;
+            }
+
             if($r->getName() == $url) {
                 return true;
             }
@@ -55,12 +63,21 @@ class Router {
             for($i = 0; $i < count($splitted_route); $i++) {
                 if(!($splitted_route[$i] == $splitted_url[$i])) {
                     $args = [];
+                    
 
                     if(!preg_match("/{.+}/", $splitted_route[$i], $args)) {
                         return false;
                     }
                     else {
-                        $route_params[str_replace('}', '', str_replace('{', '', $args[0]))] = $splitted_url[$i];
+                        if($splitted_url[$i] !== '') {
+                            $route_param = str_replace('}', '', str_replace('{', '', $args[0]));
+
+                            $route_params[$route_param] = $splitted_url[$i];
+                            $request->addParam($route_param, $splitted_url[$i]);
+                        }
+                        else {
+                            return false;
+                        }
                     }
                 }
             }
@@ -68,18 +85,32 @@ class Router {
             return true;
         });
 
+        foreach ($_GET as $key => $value) {
+            $request->addQuery($key, $value);
+        }
+
+        foreach ($_POST as $key => $value) {
+            $request->addData($key, $value);
+        }
+
+
         if (!$matched_route) {
-            $this->raiseErrorPage(404); // raise 404 error
+            $this->raiseErrorPage(404);
             return;
         }
         
         $matched_route = reset($matched_route);
-        
-        // Execute middlewares
+
+
+
+        //                 NOW JUST FINISH REQUEST                 //
+
+
+
         $request_accepted = true;
         
         foreach($matched_route->getMiddlewares() as $middleware) {
-            if(call_user_func($middleware . "::exec")) {
+            if(call_user_func_array($middleware . "::exec", [$request])) {
                 continue;
             }
             else {
@@ -87,13 +118,12 @@ class Router {
                 break;
             }
         }
-        
-        // Finish request
+
         if ($request_accepted) {
-            echo count(array_keys($route_params)) > 0 ? call_user_func_array($matched_route->getController(), array_values($route_params)) : call_user_func($matched_route->getController());
+            echo count(call_user_func_array($matched_route->getController(), [$request]));
         }
         else {
-            $this->raiseErrorPage(401); // raise 401 error
+            $this->raiseErrorPage(401);
         }
     }
     

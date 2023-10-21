@@ -5,5 +5,5 @@ namespace PHPUtils;
 
 interface Middleware
 {
-    public static function exec();
+    public static function exec($request);
 }
