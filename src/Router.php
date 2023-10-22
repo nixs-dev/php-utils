@@ -120,7 +120,7 @@ class Router {
         }
 
         if ($request_accepted) {
-            echo count(call_user_func_array($matched_route->getController(), [$request]));
+            echo call_user_func_array($matched_route->getController(), [$request]);
         }
         else {
             $this->raiseErrorPage(401);
